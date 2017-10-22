@@ -1,40 +1,55 @@
 import caffe
-import json
+import scipy.io
     
 class DebugLayer(caffe.Layer):
     """ """
-    
-    def setup(self, bottom, top):
-        pass
-        # assert len(bottom) == 2,    'requires two layer.bottoms'
-        # assert len(top) == 1,       'requires a single layer.top'
-    
-        # if hasattr(self, 'param_str') and self.param_str:
-            # params = json.loads(self.param_str)
-        # else:
-            # params = {}
-    
-        # self.top_k = params.get('top_k', 1)
-    
-    def reshape(self, bottom, top):
-        pass 
+    def setup(self, bottom, top): pass
+    def reshape(self, bottom, top): pass 
+
+    def backward(self, top, propagate_down, bottom): 
+        """
+        capture backward diffs
+        """
+        import ipdb ; ipdb.set_trace()
     
     def forward(self, bottom, top):
-        import ipdb ; ipdb.set_trace()
-        # Renaming for clarity
-        predictions = bottom[0].data
-        ground_truth = bottom[1].data
-    
-        num_correct = 0.0
-    
-        # NumPy magic - get top K predictions for each datum
-        top_predictions = (-predictions).argsort()[:, :self.top_k]
-        for batch_index, predictions in enumerate(top_predictions):
-            if ground_truth[batch_index] in predictions:
-                num_correct += 1
-    
-        # Accuracy is averaged over the batch
-        top[0].data[0] = num_correct / len(ground_truth)
-    
-    def backward(self, top, propagate_down, bottom):
-        pass
+
+        var_list = ["images",
+        "image_ids",
+        'labels',
+        'cues',
+        "conv1_1",
+        "conv1_2",
+        "pool1",
+        "conv2_1",
+        "conv2_2",
+        "pool2",
+        "conv3_1",
+        "conv3_2",
+        "conv3_3",
+        "pool3",
+        "conv4_1",
+        "conv4_2",
+        "conv4_3",
+        "pool4",
+        "conv5_1",
+        "conv5_2",
+        "conv5_3",
+        "pool5",
+        "pool5a",
+        "fc6",
+        "fc7",
+        "fc8-SEC",
+        'fc8-SEC-Softmax',
+        'fc8-SEC-CRF-log',
+        "loss-Expand",
+        "loss-Seed",
+        "loss-Constrain",
+         ]
+        dest = '/tmp/store.mat'
+        store = {}
+        for ii, var in enumerate(var_list):
+            new_name = var.replace('-', '_')
+            store[new_name] = bottom[ii].data
+        scipy.io.savemat(dest, store)
+        print('saving blobs to {}'.format(dest))
