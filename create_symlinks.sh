@@ -1,5 +1,5 @@
 # set path to caffe dir
-CAFFE_DIR=${1:-"~/coding/libs/crfasrnn/caffe-crfrnn"}
+CAFFE_DIR=${1:-"~/coding/libs/caffes/official-caffe"}
 echo "symlinking debug layer source code into ${CAFFE_DIR}"
 
 # add symlinks
